@@ -33,11 +33,30 @@
  */
 
 #include <extdll.h>
-
 #include <meta_api.h>
 
-#include "enginedef.h"
-#include "serverdef.h"
+#include "../header/enginedef.h"
+#include "../header/serverdef.h"
+#include "../header/aslp.h"
+
+edict_t* NewFindEntityByString(edict_t* pEdictStartSearchAfter, const char* pszField, const char* pszValue)
+{
+	if (ASEXT_CallHook)
+	{
+		CString str1 = { 0 };
+		str1.assign(pszField, strlen(pszField));
+		CString str2 = { 0 };
+		str2.assign(pszValue, strlen(pszValue));
+
+		(*ASEXT_CallHook)(g_aslpEntitySearched, 0, GET_PRIVATE(pEdictStartSearchAfter), &str1, &str2);
+		str1.dtor();
+		str2.dtor();
+	}
+
+	SET_META_RESULT(MRES_IGNORED);
+
+	return nullptr;
+}
 
 enginefuncs_t meta_engfuncs =
 {
@@ -58,7 +77,7 @@ enginefuncs_t meta_engfuncs =
 	NULL,						// pfnChangeYaw()
 	NULL,						// pfnChangePitch()
 
-	NULL,						// pfnFindEntityByString()
+	NewFindEntityByString,		// pfnFindEntityByString()
 	NULL,						// pfnGetEntityIllum()
 	NULL,						// pfnFindEntityInSphere()
 	NULL,						// pfnFindClientInPVS()

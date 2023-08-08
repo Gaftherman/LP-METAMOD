@@ -26,7 +26,6 @@
 */
 
 #include <extdll.h>
-
 #include <h_export.h>
 
 // From SDK dlls/h_export.cpp:

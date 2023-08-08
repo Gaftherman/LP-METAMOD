@@ -9,45 +9,75 @@
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
+    <Filter Include="Archivos de encabezado\angelscript">
+      <UniqueIdentifier>{192988d5-31f6-40d2-a9e5-28e339bfe8cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Archivos de origen\angelscript">
+      <UniqueIdentifier>{74274341-13f5-4d79-9dad-27ae778b4205}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="dllmain.cpp">
+    <ClCompile Include="source\aslp.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="dllapi.cpp">
+    <ClCompile Include="source\dllapi.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="aslp.cpp">
+    <ClCompile Include="source\dllmain.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="engine_api.cpp">
+    <ClCompile Include="source\engine_api.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="engine_hook.cpp">
+    <ClCompile Include="source\engine_hook.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="h_export.cpp">
+    <ClCompile Include="source\h_export.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="meta_api.cpp">
+    <ClCompile Include="source\meta_api.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="server_hook.cpp">
+    <ClCompile Include="source\server_hook.cpp">
       <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="source\angelscript\vftable.cpp">
+      <Filter>Archivos de origen\angelscript</Filter>
+    </ClCompile>
+    <ClCompile Include="source\angelscript\CASBaseObject.cpp">
+      <Filter>Archivos de origen\angelscript</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aslp.h">
+    <ClInclude Include="header\aslp.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="enginedef.h">
+    <ClInclude Include="header\enginedef.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="serverdef.h">
+    <ClInclude Include="header\read_file.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="signatures.h">
+    <ClInclude Include="header\scheduler.h">
       <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="header\serverdef.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="header\signatures.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="header\angelscript\angelscriptlib.h">
+      <Filter>Archivos de encabezado\angelscript</Filter>
+    </ClInclude>
+    <ClInclude Include="header\angelscript\CASBaseObject.h">
+      <Filter>Archivos de encabezado\angelscript</Filter>
+    </ClInclude>
+    <ClInclude Include="header\angelscript\utility.h">
+      <Filter>Archivos de encabezado\angelscript</Filter>
+    </ClInclude>
+    <ClInclude Include="header\angelscript\vftable.h">
+      <Filter>Archivos de encabezado\angelscript</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

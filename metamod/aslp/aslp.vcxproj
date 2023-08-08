@@ -155,20 +155,28 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="aslp.cpp" />
-    <ClCompile Include="dllapi.cpp" />
-    <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="engine_api.cpp" />
-    <ClCompile Include="engine_hook.cpp" />
-    <ClCompile Include="h_export.cpp" />
-    <ClCompile Include="meta_api.cpp" />
-    <ClCompile Include="server_hook.cpp" />
+    <ClCompile Include="source\angelscript\CASBaseObject.cpp" />
+    <ClCompile Include="source\angelscript\vftable.cpp" />
+    <ClCompile Include="source\aslp.cpp" />
+    <ClCompile Include="source\dllapi.cpp" />
+    <ClCompile Include="source\dllmain.cpp" />
+    <ClCompile Include="source\engine_api.cpp" />
+    <ClCompile Include="source\engine_hook.cpp" />
+    <ClCompile Include="source\h_export.cpp" />
+    <ClCompile Include="source\meta_api.cpp" />
+    <ClCompile Include="source\server_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="aslp.h" />
-    <ClInclude Include="enginedef.h" />
-    <ClInclude Include="serverdef.h" />
-    <ClInclude Include="signatures.h" />
+    <ClInclude Include="header\angelscript\angelscriptlib.h" />
+    <ClInclude Include="header\angelscript\CASBaseObject.h" />
+    <ClInclude Include="header\angelscript\utility.h" />
+    <ClInclude Include="header\angelscript\vftable.h" />
+    <ClInclude Include="header\aslp.h" />
+    <ClInclude Include="header\enginedef.h" />
+    <ClInclude Include="header\read_file.h" />
+    <ClInclude Include="header\scheduler.h" />
+    <ClInclude Include="header\serverdef.h" />
+    <ClInclude Include="header\signatures.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

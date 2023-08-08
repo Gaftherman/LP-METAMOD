@@ -33,15 +33,13 @@
  *
  */
 
-#include <extdll.h>			// always
+#include <extdll.h>
+#include <meta_api.h>
+#include "sdk_util.h"
 
-#include <meta_api.h>		// of course
-
-#include "sdk_util.h"		// UTIL_LogPrintf, etc
-
-#include "enginedef.h"
-#include "serverdef.h"
-#include "aslp.h"
+#include "../header/enginedef.h"
+#include "../header/serverdef.h"
+#include "../header/aslp.h"
 
 IMPORT_ASEXT_API_DEFINE();
 

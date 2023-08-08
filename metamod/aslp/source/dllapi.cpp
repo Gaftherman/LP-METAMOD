@@ -30,45 +30,45 @@
  */
 
 #include <extdll.h>
-
 #include <dllapi.h>
 #include <meta_api.h>
 
 #include <cl_entity.h>
 #include <entity_state.h>
 
-#include "enginedef.h"
-#include "serverdef.h"
-#include "aslp.h"
+#include "../header/enginedef.h"
+#include "../header/serverdef.h"
+#include "../header/aslp.h"
 
-void NewPlayerPreThink(edict_t *pEntity)
+void NewPlayerPreThink_Post(edict_t* pEntity)
 {
-	if (ASEXT_CallHook && pEntity->v.impulse == 100)
+	if (ASEXT_CallHook && GET_PRIVATE(pEntity) && pEntity->v.impulse == 100)
 	{
-		bool FlashLight = (pEntity->v.effects != EF_DIMLIGHT);
-		(*ASEXT_CallHook)(g_aslpFlashLight, 0, pEntity->pvPrivateData, &FlashLight);
+		bool FlashLight = pEntity->v.effects == EF_DIMLIGHT;
+		bool FlashLightPrediction = !FlashLight;
+		(*ASEXT_CallHook)(g_aslpFlashLight, 0, GET_PRIVATE(pEntity), &FlashLightPrediction);
+		pEntity->v.impulse = (FlashLightPrediction == FlashLight) ? 0 : 100;
 
-		if (!FlashLight && pEntity->v.effects != EF_DIMLIGHT || FlashLight && pEntity->v.effects == EF_DIMLIGHT)
-		{
-			//ALERT(at_console, "Flashlight is %s | Effect %s EF_DIMLIGHT \n", FlashLight ? "true" : "false", pEntity->v.effects == EF_DIMLIGHT ? "is not" : "is");
-			pEntity->v.impulse = 0;
-		}
+		SET_META_RESULT(MRES_OVERRIDE);
 	}
 
 	SET_META_RESULT(MRES_IGNORED);
 }
 
-void NewClientCommand(edict_t* pEntity)
+void NewClientCommand_Post(edict_t* pEntity)
 {
-	if (ASEXT_CallHook && pEntity->pvPrivateData)
+	if (ASEXT_CallHook && GET_PRIVATE(pEntity))
 	{
-		const char* pcmd = CMD_ARGV(0);
+		std::string strArgv = CMD_ARGV(0);
+		std::string strArgs = (CMD_ARGC() >= 2) ? CMD_ARGS() : "";
+		std::string strSpace = (CMD_ARGC() >= 2) ? " " : "";
+		std::string strCombined = strArgv + strSpace + strArgs;
+		const char* pArg = strCombined.c_str();
 
-		CString str = { 0 };
-		str.assign(pcmd, strlen(pcmd));
-
-		(*ASEXT_CallHook)(g_aslpClientCommand, 0, pEntity->pvPrivateData, &str);
-		str.dtor();
+		CString CStrMessage = { 0 };
+		CStrMessage.assign(pArg, strlen(pArg));
+		(*ASEXT_CallHook)(g_aslpClientCommand, 0, GET_PRIVATE(pEntity), &CStrMessage);
+		CStrMessage.dtor();
 	}
 
 	SET_META_RESULT(MRES_IGNORED);
@@ -98,12 +98,12 @@ static DLL_FUNCTIONS gFunctionTable =
 	NULL,					// pfnClientDisconnect
 	NULL,					// pfnClientKill
 	NULL,					// pfnClientPutInServer
-	NewClientCommand,		// pfnClientCommand
+	NULL,					// pfnClientCommand
 	NULL,					// pfnClientUserInfoChanged
 	NULL,					// pfnServerActivate
 	NULL,					// pfnServerDeactivate
 
-	NewPlayerPreThink,		// pfnPlayerPreThink
+	NULL,					// pfnPlayerPreThink
 	NULL,					// pfnPlayerPostThink
 
 	NULL,					// pfnStartFrame
@@ -162,12 +162,12 @@ static DLL_FUNCTIONS gFunctionTable_Post =
 	NULL,					// pfnClientDisconnect
 	NULL,					// pfnClientKill
 	NULL,					// pfnClientPutInServer
-	NULL,					// pfnClientCommand
+	NewClientCommand_Post,	// pfnClientCommand
 	NULL,					// pfnClientUserInfoChanged
 	NULL,					// pfnServerActivate
 	NULL,					// pfnServerDeactivate
 
-	NULL,					// pfnPlayerPreThink
+	NewPlayerPreThink_Post,	// pfnPlayerPreThink
 	NULL,					// pfnPlayerPostThink
 
 	NULL,					// pfnStartFrame

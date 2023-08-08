@@ -1,5 +1,4 @@
 #include <extdll.h>
-
 #include <dllapi.h>
 #include <meta_api.h>
 
@@ -7,5 +6,5 @@
 #include <entity_state.h>
 #include <com_model.h>
 
-#include "enginedef.h"
-#include "serverdef.h"
+#include "../header/enginedef.h"
+#include "../header/serverdef.h"
