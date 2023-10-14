@@ -6,5 +6,5 @@
 #include <entity_state.h>
 #include <com_model.h>
 
-#include "../header/enginedef.h"
-#include "../header/serverdef.h"
+#include "enginedef.h"
+#include "serverdef.h"

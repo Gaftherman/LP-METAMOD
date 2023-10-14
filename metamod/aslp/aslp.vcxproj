@@ -72,11 +72,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header\discord\rapidjson;C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header\discord\include;$(IncludePath)</IncludePath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IncludePath>C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header\angelscript;C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header\entities;C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header;$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -92,13 +94,16 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../hlsdk/common;../hlsdk/dlls;../hlsdk/pm_shared;../hlsdk/engine;../metamod/;../curl/include/curl/;../openssl/include;../asext/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../hlsdk/common;../hlsdk/dlls;../hlsdk/pm_shared;../hlsdk/engine;../metamod/;C:\Users\Estefano\source\repos\metamod-fallguys\aslp\header;../openssl/include;../asext/include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "C:\Users\Estefano\source\repos\metamod-fallguys\Release\$(TargetName)$(TargetExt)" "C:\Program Files (x86)\Steam\steamapps\common\Sven Co-op\svencoop\addons\metamod\dlls"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -110,7 +115,8 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>../hlsdk/common;../hlsdk/dlls;../hlsdk/pm_shared;../hlsdk/engine;../metamod/;../curl/include/curl/;../openssl/include;../asext/include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../hlsdk/common;../hlsdk/dlls;../hlsdk/pm_shared;../hlsdk/engine;../metamod/;../asext/include</AdditionalIncludeDirectories>
+      <LanguageStandard>Default</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,7 +124,11 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>call "C:\Users\Estefano\source\repos\metamod-fallguys\aslp\build_script.bat"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -155,28 +165,42 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\angelscript\CASBaseObject.cpp" />
     <ClCompile Include="source\angelscript\vftable.cpp" />
     <ClCompile Include="source\aslp.cpp" />
     <ClCompile Include="source\dllapi.cpp" />
     <ClCompile Include="source\dllmain.cpp" />
     <ClCompile Include="source\engine_api.cpp" />
     <ClCompile Include="source\engine_hook.cpp" />
+    <ClCompile Include="source\entities\CApache.cpp" />
+    <ClCompile Include="source\entities\CBloater.cpp" />
+    <ClCompile Include="source\entities\COsprey.cpp" />
+    <ClCompile Include="source\entities\CPlayer.cpp" />
+    <ClCompile Include="source\entities\CSentry.cpp" />
+    <ClCompile Include="source\entities\CTurret.cpp" />
+    <ClCompile Include="source\entities\register.cpp" />
     <ClCompile Include="source\h_export.cpp" />
     <ClCompile Include="source\meta_api.cpp" />
     <ClCompile Include="source\server_hook.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="header\angelscript\angelscript.h" />
     <ClInclude Include="header\angelscript\angelscriptlib.h" />
-    <ClInclude Include="header\angelscript\CASBaseObject.h" />
-    <ClInclude Include="header\angelscript\utility.h" />
+    <ClInclude Include="header\angelscript\dlldef.h" />
+    <ClInclude Include="header\angelscript\signatures.h" />
     <ClInclude Include="header\angelscript\vftable.h" />
     <ClInclude Include="header\aslp.h" />
     <ClInclude Include="header\enginedef.h" />
-    <ClInclude Include="header\read_file.h" />
-    <ClInclude Include="header\scheduler.h" />
+    <ClInclude Include="header\entities\base\hook_items.h" />
+    <ClInclude Include="header\entities\CApache.h" />
+    <ClInclude Include="header\entities\CBloater.h" />
+    <ClInclude Include="header\entities\COsprey.h" />
+    <ClInclude Include="header\entities\CPlayer.h" />
+    <ClInclude Include="header\entities\CSentry.h" />
+    <ClInclude Include="header\entities\CTurret.h" />
+    <ClInclude Include="header\entities\register.h" />
     <ClInclude Include="header\serverdef.h" />
     <ClInclude Include="header\signatures.h" />
+    <ClInclude Include="header\utility.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

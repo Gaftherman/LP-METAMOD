@@ -1,12 +1,9 @@
 #pragma once
 
-#include <string>
-#include "read_file.h"
-#include "scheduler.h"
-
-extern void* g_aslpFlashLight;
-extern void* g_aslpClientCommand;
-extern void* g_aslpEntitySearched;
+#include "angelscript.h"
 
 void RegisterAngelScriptMethods();
 void RegisterAngelScriptHooks();
+
+void VtableUnhook();
+void NewServerActivate(edict_t* pEdictList, int edictCount, int clientMax);

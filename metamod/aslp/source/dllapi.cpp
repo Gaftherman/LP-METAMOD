@@ -32,53 +32,291 @@
 #include <extdll.h>
 #include <dllapi.h>
 #include <meta_api.h>
+#include <log_meta.h>
+#include <iostream>
 
-#include <cl_entity.h>
-#include <entity_state.h>
+#include "enginedef.h"
+#include "serverdef.h"
+#include "aslp.h"
 
-#include "../header/enginedef.h"
-#include "../header/serverdef.h"
-#include "../header/aslp.h"
+#define CALL_ANGELSCRIPT(pfn, ...) if (ASEXT_CallHook){(*ASEXT_CallHook)(g_AngelHook.pfn, 0, __VA_ARGS__);}
 
-void NewPlayerPreThink_Post(edict_t* pEntity)
+void NewThink(edict_t* pEntity)
 {
-	if (ASEXT_CallHook && GET_PRIVATE(pEntity) && pEntity->v.impulse == 100)
+	if (!pEntity->pvPrivateData)
 	{
-		bool FlashLight = pEntity->v.effects == EF_DIMLIGHT;
-		bool FlashLightPrediction = !FlashLight;
-		(*ASEXT_CallHook)(g_aslpFlashLight, 0, GET_PRIVATE(pEntity), &FlashLightPrediction);
-		pEntity->v.impulse = (FlashLightPrediction == FlashLight) ? 0 : 100;
-
-		SET_META_RESULT(MRES_OVERRIDE);
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
 	}
 
-	SET_META_RESULT(MRES_IGNORED);
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pThink, pEntity->pvPrivateData, &meta_result);
+	SET_META_RESULT(meta_result);
 }
 
-void NewClientCommand_Post(edict_t* pEntity)
+void NewTouch(edict_t* pentTouched, edict_t* pentOther)
 {
-	if (ASEXT_CallHook && GET_PRIVATE(pEntity))
+	if (!pentTouched->pvPrivateData || !pentOther->pvPrivateData)
 	{
-		std::string strArgv = CMD_ARGV(0);
-		std::string strArgs = (CMD_ARGC() >= 2) ? CMD_ARGS() : "";
-		std::string strSpace = (CMD_ARGC() >= 2) ? " " : "";
-		std::string strCombined = strArgv + strSpace + strArgs;
-		const char* pArg = strCombined.c_str();
-
-		CString CStrMessage = { 0 };
-		CStrMessage.assign(pArg, strlen(pArg));
-		(*ASEXT_CallHook)(g_aslpClientCommand, 0, GET_PRIVATE(pEntity), &CStrMessage);
-		CStrMessage.dtor();
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
 	}
 
-	SET_META_RESULT(MRES_IGNORED);
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pTouch, pentTouched->pvPrivateData, pentOther->pvPrivateData, &meta_result);
+	SET_META_RESULT(meta_result);
 }
+
+void NewBlocked(edict_t* pentTouched, edict_t* pentOther)
+{
+	if (!pentTouched->pvPrivateData || !pentOther->pvPrivateData)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
+	}
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pBlocked, pentTouched->pvPrivateData, pentOther->pvPrivateData, &meta_result);
+	SET_META_RESULT(meta_result);
+}
+
+void NewKeyValue(edict_t* pentKeyvalue, KeyValueData* pkvd)
+{
+	if (!pentKeyvalue->pvPrivateData || !pkvd)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
+	}
+
+	CString CStrKeyName = { 0 }; CStrKeyName.assign(pkvd->szKeyName, strlen(pkvd->szKeyName));
+	CString CStrKeyValue = { 0 }; CStrKeyValue.assign(pkvd->szValue, strlen(pkvd->szValue));
+	CString CStrClassname = { 0 }; CStrClassname.assign(pkvd->szClassName, strlen(pkvd->szClassName));
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pKeyValue, pentKeyvalue->pvPrivateData, &CStrKeyName, &CStrKeyValue, &CStrClassname, &meta_result);
+	CStrKeyName.dtor(); CStrKeyValue.dtor(); CStrClassname.dtor();
+	SET_META_RESULT(meta_result);
+}
+
+void NewClientCommand(edict_t* pEntity)
+{
+	if (!pEntity->pvPrivateData)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
+	}
+
+	std::string strCombined = CMD_ARGV(0) + ((CMD_ARGC() >= 2) ? (" " + std::string(CMD_ARGS())) : "");
+	CString CStrMessage = { 0 }; CStrMessage.assign(strCombined.c_str(), strlen(strCombined.c_str()));
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pClientCommand, pEntity->pvPrivateData, &CStrMessage, &meta_result);
+	CStrMessage.dtor();
+	SET_META_RESULT(meta_result);
+}
+
+void NewPM_Move(playermove_t* pmove, int server)
+{
+	if (!pmove)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
+	}
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pPM_Move, &pmove, server, &meta_result);
+	RETURN_META(meta_result);
+}
+
+int NewAddToFullPack(struct entity_state_s* state, int entindex, edict_t* ent, edict_t* host, int hostflags, int player, unsigned char* pSet)
+{
+	if (!ent->pvPrivateData || !host->pvPrivateData || !state || !player)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	/*
+	if ((ent->v.effects & EF_NODRAW) && (ent != host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (!ent->v.modelindex || !STRING(ent->v.model))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if ((ent->v.flags & FL_SPECTATOR) && (ent != host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (ent != host && !ENGINE_CHECK_VISIBILITY((const struct edict_s*)ent, pSet))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (ent->v.flags & FL_SKIPLOCALHOST && (hostflags & 1) && (ent->v.owner == host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+	*/
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	int result = 0;
+	CALL_ANGELSCRIPT(pAddToFullPack, &state, entindex, ent, host, hostflags, player, &meta_result, &result);
+	RETURN_META_VALUE(meta_result, result);
+}
+
+void NewThink_Post(edict_t* pEntity)
+{
+	if (!pEntity->pvPrivateData)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return;
+	}
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	CALL_ANGELSCRIPT(pThink_Post, pEntity->pvPrivateData, &meta_result);
+	SET_META_RESULT(meta_result);
+}
+
+int NewAddToFullPack_Post(struct entity_state_s* state, int entindex, edict_t* ent, edict_t* host, int hostflags, int player, unsigned char* pSet)
+{
+	if (!ent->pvPrivateData || !host->pvPrivateData || !state || !player)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	/*
+	if ((ent->v.effects & EF_NODRAW) && (ent != host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (!ent->v.modelindex || !STRING(ent->v.model))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if ((ent->v.flags & FL_SPECTATOR) && (ent != host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (ent != host && !ENGINE_CHECK_VISIBILITY((const struct edict_s*)ent, pSet))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	if (ent->v.flags & FL_SKIPLOCALHOST && (hostflags & 1) && (ent->v.owner == host))
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+	*/
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	int result = 0;
+	CALL_ANGELSCRIPT(pAddToFullPack_Post, &state, entindex, ent, host, hostflags, player, &meta_result, &result);
+	RETURN_META_VALUE(meta_result, result);
+}
+
+int NewShouldCollide(edict_t* pentTouched, edict_t* pentOther)
+{
+	if (!pentTouched->pvPrivateData || !pentOther->pvPrivateData)
+	{
+		SET_META_RESULT(META_RES::MRES_IGNORED);
+		return 0;
+	}
+
+	META_RES meta_result = META_RES::MRES_IGNORED;
+	int result = 0;
+	CALL_ANGELSCRIPT(pShouldCollide, pentTouched->pvPrivateData, pentOther->pvPrivateData, &meta_result, &result);
+	RETURN_META_VALUE(meta_result, result);
+}
+#undef CALL_ANGELSCRIPT
 
 static DLL_FUNCTIONS gFunctionTable =
 {
 	NULL,					// pfnGameInit
 	NULL,					// pfnSpawn
-	NULL,					// pfnThink
+	NewThink,				// pfnThink
+	NULL,					// pfnUse
+	NewTouch,				// pfnTouch
+	NewBlocked,				// pfnBlocked
+	NewKeyValue,			// pfnKeyValue
+	NULL,					// pfnSave
+	NULL,					// pfnRestore
+	NULL,					// pfnSetAbsBox
+
+	NULL,					// pfnSaveWriteFields
+	NULL,					// pfnSaveReadFields
+
+	NULL,					// pfnSaveGlobalState
+	NULL,					// pfnRestoreGlobalState
+	NULL,					// pfnResetGlobalState
+
+	NULL,					// pfnClientConnect
+	NULL,					// pfnClientDisconnect
+	NULL,					// pfnClientKill
+	NULL,					// pfnClientPutInServer
+	NewClientCommand,		// pfnClientCommand
+	NULL,					// pfnClientUserInfoChanged
+	NewServerActivate,		// pfnServerActivate
+	NULL,					// pfnServerDeactivate
+
+	NULL,					// pfnPlayerPreThink
+	NULL,					// pfnPlayerPostThink
+
+	NULL,					// pfnStartFrame
+	NULL,					// pfnParmsNewLevel
+	NULL,					// pfnParmsChangeLevel
+
+	NULL,					// pfnGetGameDescription
+	NULL,					// pfnPlayerCustomization
+
+	NULL,					// pfnSpectatorConnect
+	NULL,					// pfnSpectatorDisconnect
+	NULL,					// pfnSpectatorThink
+
+	NULL,					// pfnSys_Error
+
+	NewPM_Move,				// pfnPM_Move
+	NULL,					// pfnPM_Init
+	NULL,					// pfnPM_FindTextureType
+
+	NULL,					// pfnSetupVisibility
+	NULL,					// pfnUpdateClientData
+	NewAddToFullPack,		// pfnAddToFullPack
+	NULL,					// pfnCreateBaseline
+	NULL,					// pfnRegisterEncoders
+	NULL,					// pfnGetWeaponData
+	NULL,					// pfnCmdStart
+	NULL,					// pfnCmdEnd
+	NULL,					// pfnConnectionlessPacket
+	NULL,					// pfnGetHullBounds
+	NULL,					// pfnCreateInstancedBaselines
+	NULL,					// pfnInconsistentFile
+	NULL,					// pfnAllowLagCompensation
+};
+
+static DLL_FUNCTIONS gFunctionTable_Post =
+{
+	NULL,					// pfnGameInit
+	NULL,					// pfnSpawn
+	NewThink_Post,			// pfnThink
 	NULL,					// pfnUse
 	NULL,					// pfnTouch
 	NULL,					// pfnBlocked
@@ -125,7 +363,7 @@ static DLL_FUNCTIONS gFunctionTable =
 
 	NULL,					// pfnSetupVisibility
 	NULL,					// pfnUpdateClientData
-	NULL,					// pfnAddToFullPack
+	NewAddToFullPack_Post,	// pfnAddToFullPack
 	NULL,					// pfnCreateBaseline
 	NULL,					// pfnRegisterEncoders
 	NULL,					// pfnGetWeaponData
@@ -137,88 +375,6 @@ static DLL_FUNCTIONS gFunctionTable =
 	NULL,					// pfnInconsistentFile
 	NULL,					// pfnAllowLagCompensation
 };
-
-static DLL_FUNCTIONS gFunctionTable_Post =
-{
-	NULL,					// pfnGameInit
-	NULL,					// pfnSpawn
-	NULL,					// pfnThink
-	NULL,					// pfnUse
-	NULL,					// pfnTouch
-	NULL,					// pfnBlocked
-	NULL,					// pfnKeyValue
-	NULL,					// pfnSave
-	NULL,					// pfnRestore
-	NULL,					// pfnSetAbsBox
-
-	NULL,					// pfnSaveWriteFields
-	NULL,					// pfnSaveReadFields
-
-	NULL,					// pfnSaveGlobalState
-	NULL,					// pfnRestoreGlobalState
-	NULL,					// pfnResetGlobalState
-
-	NULL,					// pfnClientConnect
-	NULL,					// pfnClientDisconnect
-	NULL,					// pfnClientKill
-	NULL,					// pfnClientPutInServer
-	NewClientCommand_Post,	// pfnClientCommand
-	NULL,					// pfnClientUserInfoChanged
-	NULL,					// pfnServerActivate
-	NULL,					// pfnServerDeactivate
-
-	NewPlayerPreThink_Post,	// pfnPlayerPreThink
-	NULL,					// pfnPlayerPostThink
-
-	NULL,					// pfnStartFrame
-	NULL,					// pfnParmsNewLevel
-	NULL,					// pfnParmsChangeLevel
-
-	NULL,					// pfnGetGameDescription
-	NULL,					// pfnPlayerCustomization
-
-	NULL,					// pfnSpectatorConnect
-	NULL,					// pfnSpectatorDisconnect
-	NULL,					// pfnSpectatorThink
-
-	NULL,					// pfnSys_Error
-
-	NULL,					// pfnPM_Move
-	NULL,					// pfnPM_Init
-	NULL,					// pfnPM_FindTextureType
-
-	NULL,					// pfnSetupVisibility
-	NULL,					// pfnUpdateClientData
-	NULL,					// pfnAddToFullPack
-	NULL,					// pfnCreateBaseline
-	NULL,					// pfnRegisterEncoders
-	NULL,					// pfnGetWeaponData
-	NULL,					// pfnCmdStart
-	NULL,					// pfnCmdEnd
-	NULL,					// pfnConnectionlessPacket
-	NULL,					// pfnGetHullBounds
-	NULL,					// pfnCreateInstancedBaselines
-	NULL,					// pfnInconsistentFile
-	NULL,					// pfnAllowLagCompensation
-};
-
-C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
-{
-	if (!pFunctionTable)
-	{
-		LOG_ERROR(PLID, "GetEntityAPI2_Post called with null pFunctionTable");
-		return FALSE;
-	}
-	else if (*interfaceVersion != INTERFACE_VERSION)
-	{
-		LOG_ERROR(PLID, "GetEntityAPI2_Post version mismatch; requested=%d ours=%d", *interfaceVersion, INTERFACE_VERSION);
-		//! Tell metamod what version we had, so it can figure out who is out of date.
-		*interfaceVersion = INTERFACE_VERSION;
-		return FALSE;
-	}
-	memcpy(pFunctionTable, &gFunctionTable_Post, sizeof(DLL_FUNCTIONS));
-	return TRUE;
-}
 
 C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
 {
@@ -239,13 +395,31 @@ C_DLLEXPORT int GetEntityAPI2(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersi
 	return TRUE;
 }
 
+C_DLLEXPORT int GetEntityAPI2_Post(DLL_FUNCTIONS* pFunctionTable, int* interfaceVersion)
+{
+	if (!pFunctionTable)
+	{
+		LOG_ERROR(PLID, "GetEntityAPI2_Post called with null pFunctionTable");
+		return FALSE;
+	}
+	else if (*interfaceVersion != INTERFACE_VERSION)
+	{
+		LOG_ERROR(PLID, "GetEntityAPI2_Post version mismatch; requested=%d ours=%d", *interfaceVersion, INTERFACE_VERSION);
+		//! Tell metamod what version we had, so it can figure out who is out of date.
+		*interfaceVersion = INTERFACE_VERSION;
+		return FALSE;
+	}
+	memcpy(pFunctionTable, &gFunctionTable_Post, sizeof(DLL_FUNCTIONS));
+	return TRUE;
+}
+
 static NEW_DLL_FUNCTIONS gNewDllFunctionTable =
 {
 	// Called right before the object's memory is freed. 
 	// Calls its destructor.
 	NULL,
 	NULL,
-	NULL,
+	NewShouldCollide,
 
 	// Added 2005/08/11 (no SDK update):
 	NULL,//void(*pfnCvarValue)(const edict_t *pEnt, const char *value);

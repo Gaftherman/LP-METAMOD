@@ -1,83 +1,134 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Archivos de origen">
+    <Filter Include="Source">
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Archivos de encabezado">
+    <Filter Include="Header">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Archivos de encabezado\angelscript">
-      <UniqueIdentifier>{192988d5-31f6-40d2-a9e5-28e339bfe8cc}</UniqueIdentifier>
+    <Filter Include="Source\angelscript">
+      <UniqueIdentifier>{d14b5488-c820-4e6e-9bb4-f575f27989ee}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Archivos de origen\angelscript">
-      <UniqueIdentifier>{74274341-13f5-4d79-9dad-27ae778b4205}</UniqueIdentifier>
+    <Filter Include="Header\angelscript">
+      <UniqueIdentifier>{1eb1c1d5-2f57-4b07-a191-189370d8d8e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\entities">
+      <UniqueIdentifier>{e37012c1-ebf4-428d-b127-e24c5ce77ad4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source\entities">
+      <UniqueIdentifier>{81379733-19ca-4f67-b4cd-a7cbd70f43f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header\entities\base">
+      <UniqueIdentifier>{b8eeb66b-1dc3-4a77-a27b-23ebc1dda89d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\aslp.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\dllapi.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\dllmain.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\engine_api.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\engine_hook.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\h_export.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\meta_api.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\server_hook.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Source</Filter>
     </ClCompile>
     <ClCompile Include="source\angelscript\vftable.cpp">
-      <Filter>Archivos de origen\angelscript</Filter>
+      <Filter>Source\angelscript</Filter>
     </ClCompile>
-    <ClCompile Include="source\angelscript\CASBaseObject.cpp">
-      <Filter>Archivos de origen\angelscript</Filter>
+    <ClCompile Include="source\entities\register.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\CPlayer.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\CBloater.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\COsprey.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\CSentry.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\CTurret.cpp">
+      <Filter>Source\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="source\entities\CApache.cpp">
+      <Filter>Source\entities</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="header\aslp.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="header\enginedef.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="header\read_file.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="header\scheduler.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="header\serverdef.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Header</Filter>
     </ClInclude>
     <ClInclude Include="header\signatures.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Header</Filter>
+    </ClInclude>
+    <ClInclude Include="header\angelscript\angelscript.h">
+      <Filter>Header\angelscript</Filter>
     </ClInclude>
     <ClInclude Include="header\angelscript\angelscriptlib.h">
-      <Filter>Archivos de encabezado\angelscript</Filter>
+      <Filter>Header\angelscript</Filter>
     </ClInclude>
-    <ClInclude Include="header\angelscript\CASBaseObject.h">
-      <Filter>Archivos de encabezado\angelscript</Filter>
+    <ClInclude Include="header\angelscript\dlldef.h">
+      <Filter>Header\angelscript</Filter>
     </ClInclude>
-    <ClInclude Include="header\angelscript\utility.h">
-      <Filter>Archivos de encabezado\angelscript</Filter>
+    <ClInclude Include="header\angelscript\signatures.h">
+      <Filter>Header\angelscript</Filter>
     </ClInclude>
     <ClInclude Include="header\angelscript\vftable.h">
-      <Filter>Archivos de encabezado\angelscript</Filter>
+      <Filter>Header\angelscript</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\register.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\base\hook_items.h">
+      <Filter>Header\entities\base</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\CPlayer.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\CApache.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\CBloater.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\COsprey.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\CSentry.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\entities\CTurret.h">
+      <Filter>Header\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="header\utility.h">
+      <Filter>Header\angelscript</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

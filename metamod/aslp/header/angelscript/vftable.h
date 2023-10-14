@@ -1,55 +1,17 @@
 #pragma once
-//just type def
+
 typedef void CRestore;
 typedef void CSave;
 typedef void MonsterEvent;
-typedef struct{
-	int		iSlot;
-	int		iPosition;
-	const char* pszAmmo1;	// ammo 1 type
-	int		iMaxAmmo1;		// max ammo 1
-	const char* pszAmmo2;	// ammo 2 type
-	int		iMaxAmmo2;		// max ammo 2
-	const char* pszName;
-	int		iMaxClip;
-	int		iId;
-	int		iFlags;
-	int		iWeight;// this value used to determine this weapon's importance in autoselection.
-} ItemInfo;
 typedef void CBaseEntity;
 typedef void CBaseMonster;
 typedef void CCustomEntity;
 typedef void CBasePlayerWeapon;
 typedef void CSquadMonster;
-typedef struct Task_s {
 
-}Task_t;
+typedef struct {} ItemInfo;
+typedef struct {} Task_t;
 
-#ifdef _WIN32
-
-#define SC_SERVER_DECL __fastcall
-#define SC_SERVER_DUMMYARG_NOCOMMA , int dummy
-#define SC_SERVER_DUMMYARG int dummy, 
-#define SC_SERVER_PASS_DUMMYARG dummy, 
-#define SC_SERVER_PASS_DUMMYARG2 ,dummy
-#define SC_SERVER_PASS_DUMMYARG_NOCOMMA dummy
-#define SC_SERVER_DUMMYVAR int dummy = 0;
-#define SERVER_DLL_NAME "server.dll"
-
-#else
-
-#define SC_SERVER_DECL 
-#define SC_SERVER_DUMMYARG_NOCOMMA
-#define SC_SERVER_DUMMYARG
-#define SC_SERVER_PASS_DUMMYARG
-#define SC_SERVER_PASS_DUMMYARG2 
-#define SC_SERVER_PASS_DUMMYARG_NOCOMMA
-#define SC_SERVER_DUMMYVAR
-#define SERVER_DLL_NAME "server.so"
-
-#endif
-
-//101
 typedef struct vtable_base_s {
 	void (SC_SERVER_DECL* PreSpawn)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* Spawn)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
@@ -74,7 +36,7 @@ typedef struct vtable_base_s {
 	void (SC_SERVER_DECL* TraceAttack)(void* pThis, SC_SERVER_DUMMYARG entvars_t* pevAttacker, float flDamage, Vector vecDir, TraceResult* ptr, int bitsDamageType) = nullptr;
 	int (SC_SERVER_DECL* TakeDamage)(void* pThis, SC_SERVER_DUMMYARG entvars_t* pevInflictor, entvars_t* pevAttacker, float flDamage, int bitsDamageType) = nullptr;
 	int (SC_SERVER_DECL* TakeHealth)(void* pThis, SC_SERVER_DUMMYARG float flHealth, int bitsDamageType, int cap) = nullptr;
-	int (SC_SERVER_DECL* TakArmor)(void* pThis, SC_SERVER_DUMMYARG float flHealth, int bitsDamageType, int cap) = nullptr;
+	int (SC_SERVER_DECL* TakeArmor)(void* pThis, SC_SERVER_DUMMYARG float flHealth, int bitsDamageType, int cap) = nullptr;
 	void (SC_SERVER_DECL* Killed)(void* pThis, SC_SERVER_DUMMYARG entvars_t* pevAttacker, int iGib) = nullptr;
 	int (SC_SERVER_DECL* BloodColor)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* TraceBleed)(void* pThis, SC_SERVER_DUMMYARG float flDamage, Vector vecDir, TraceResult* ptr, int bitsDamageType) = nullptr;
@@ -191,9 +153,9 @@ typedef struct vtable_monster_s : vtable_animating_s {
 	bool (SC_SERVER_DECL* CheckRangeAttack2)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
 	bool (SC_SERVER_DECL* CheckRangeAttack2_Move)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
 	bool (SC_SERVER_DECL* CheckMeleeAttack1)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
-	bool (SC_SERVER_DECL* CheckMeleeAttack1_Move)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
-	bool (SC_SERVER_DECL* CheckMeleeAttack2)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
-	bool (SC_SERVER_DECL* CheckMeleeAttack2_Move)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
+	bool (SC_SERVER_DECL* CheckMeleeAttack1_Move)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
+	bool (SC_SERVER_DECL* CheckMeleeAttack2)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
+	bool (SC_SERVER_DECL* CheckMeleeAttack2_Move)(void* pThis, SC_SERVER_DUMMYARG float flDot, float flDist) = nullptr;
 	void (SC_SERVER_DECL* CheckTankUsage)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* ScheduleFromName)(void* pThis, SC_SERVER_DUMMYARG char* name) = nullptr;
 	void (SC_SERVER_DECL* StartTask)(void* pThis, SC_SERVER_DUMMYARG Task_t* name) = nullptr;
@@ -246,7 +208,7 @@ typedef struct vtable_monster_s : vtable_animating_s {
 	int (SC_SERVER_DECL* HasHumanGibs)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	int (SC_SERVER_DECL* HasAlienGibs)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* FadeMonster)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
-	Vector(SC_SERVER_DECL* GetGunPosition)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
+	Vector (SC_SERVER_DECL* GetGunPosition)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* CheckTimeBasedDamage)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* ClearTimeBasedDamage)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
 	void (SC_SERVER_DECL* DeathSound)(void* pThis SC_SERVER_DUMMYARG_NOCOMMA) = nullptr;
@@ -385,4 +347,15 @@ typedef struct vtable_playerweapon_s : vtable_playeritem_s {
 }vtable_playerweapon_t;
 
 vtable_base_t* GetEntityVTable(const char* szClassName);
+vtable_animating_t* GetEntityVTableAnimating(const char* szClassName);
+vtable_monster_t* GetEntityVTableMonster(const char* szClassName);
+vtable_player_t* GetEntityVTablePlayer(const char* szClassName);
+vtable_playeritem_t* GetEntityVTablePlayerItem(const char* szClassName);
+vtable_playerweapon_t* GetEntityVTablePlayerWeapon(const char* szClassName);
+
 vtable_base_s* AddEntityVTable(const char* szClassName);
+vtable_animating_s* AddEntityVTableAnimating(const char* szClassName);
+vtable_monster_s* AddEntityVTableMonster(const char* szClassName);
+vtable_player_s* AddEntityVTablePlayer(const char* szClassName);
+vtable_playeritem_s* AddEntityVTablePlayerItem(const char* szClassName);
+vtable_playerweapon_s* AddEntityVTablePlayerWeapon(const char* szClassName);
